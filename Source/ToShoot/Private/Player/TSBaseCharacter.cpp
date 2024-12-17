@@ -51,19 +51,17 @@ void ATSBaseCharacter::BeginPlay()
 	
 	check(HealthComponent);
 	check(HealthTextComponent);
+	//check(GetCharacterMovement);
 
+	OnHealthChanged(HealthComponent->GetHealth());
 	HealthComponent->OnDeath.AddUObject(this, &ATSBaseCharacter::OnDeath);
-
+	HealthComponent->OnHealthChanged.AddUObject(this, &ATSBaseCharacter::OnHealthChanged);
 }
 
 // Called every frame
 void ATSBaseCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	const auto Health = HealthComponent->GetHealth();
-	HealthTextComponent->SetText(FText::FromString(FString::Printf(TEXT("%.0f"), Health)));
-
 }
 
 
@@ -121,6 +119,11 @@ void ATSBaseCharacter::OnDeath()
 
 	GetCharacterMovement()->DisableMovement();
 	SetLifeSpan(5.0f);
+}
+
+void ATSBaseCharacter::OnHealthChanged(float Health)
+{
+	HealthTextComponent->SetText(FText::FromString(FString::Printf(TEXT("%.0f"), Health)));
 }
 
 

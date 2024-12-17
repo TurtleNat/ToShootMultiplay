@@ -12,7 +12,7 @@ public class ToShoot : ModuleRules
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
-        PublicIncludePaths.AddRange(new string[] { "ToShoot/Public/Player", "ToShoot/Public/Components", "ToShoot/Public/Weapon", "ToShoot/Public/Weapon/Components", "ToShoot/Public/Menu", "ToShoot/Public/Menu/UI" });
+        PublicIncludePaths.AddRange(new string[] { "ToShoot/Public/Player", "ToShoot/Public/Components", "ToShoot/Public/Weapon", "ToShoot/Public/Weapon/Components", "ToShoot/Public/Menu", "ToShoot/Public/Menu/UI", "ToShoot/Public/Dev" });
        // PublicIncludePaths.AddRange(new string[] { "TestShooter/Public/Player", "TestShooter/Public/Component" });
 
         // Uncomment if you are using Slate UI

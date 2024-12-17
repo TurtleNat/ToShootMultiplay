@@ -4,6 +4,10 @@
 #include "Components/TSHealthComponent.h"
 #include "GameFramework/Actor.h"
 #include "OnlineSession.generated.h"
+#include "Dev/TSFireDamageType.h"
+#include "Dev/TSIceDamageType.h"
+
+DEFINE_LOG_CATEGORY_STATIC(LogHealthComponent, All, All)
 
 // Sets default values for this component's properties
 UTSHealthComponent::UTSHealthComponent()
@@ -13,7 +17,7 @@ UTSHealthComponent::UTSHealthComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 	// ...
 }
-
+  
 
 // Called when the game starts
 void UTSHealthComponent::BeginPlay()
@@ -23,6 +27,7 @@ void UTSHealthComponent::BeginPlay()
 	check(MaxHealth);
 
 	Health = MaxHealth;
+	OnHealthChanged.Broadcast(Health);
 	// ...
 	
 	AActor* ComponentOwner = GetOwner();
@@ -45,12 +50,10 @@ void UTSHealthComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 
 void UTSHealthComponent::OnTakeAnyDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser)
 {
-	//UE_LOG(BaseCharacterLog, Display, TEXT("Damage^ %f"), Damage);
-
-	/*if (Damage <= 0.0f || IsDead()) return;
-	Health = FMath::Clamp(Health - Damage, 0.0f, MaxHealth);*/
-
+	if (Damage <= 0.0f || IsDead()) return;
+;
 	Health -= Damage;
+	OnHealthChanged.Broadcast(Health);
 
 	if (IsDead())
 	{

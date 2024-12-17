@@ -7,6 +7,7 @@
 #include "TSHealthComponent.generated.h"
 
 DECLARE_MULTICAST_DELEGATE(FOnDeath)
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnHealthChanged, float)
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class TOSHOOT_API UTSHealthComponent : public UActorComponent
@@ -26,6 +27,7 @@ public:
 	float GetHealthPercent() const { return Health / MaxHealth; }
 
 	FOnDeath OnDeath;
+	FOnHealthChanged OnHealthChanged;
 
 protected:
 	// Called when the game starts
