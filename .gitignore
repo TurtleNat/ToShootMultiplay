@@ -1,32 +1,32 @@
-# Prerequisites
-*.d
 
-# Compiled Object files
-*.slo
-*.lo
+# Visual Studio
+.vs/
+*.sln
+*.suo
+*.VC.db
+*.VC.opendb
+
+# Unreal Engine
+Binaries/
+Build/
+DerivedDataCache/
+Intermediate/
+Saved/
+
+# Compiled files
 *.o
 *.obj
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
 *.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
+*.exe
 *.lib
 
-# Executables
-*.exe
-*.out
-*.app
+# Logs
+*.log
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db

@@ -56,6 +56,7 @@ void ATSBaseCharacter::BeginPlay()
 	OnHealthChanged(HealthComponent->GetHealth());
 	HealthComponent->OnDeath.AddUObject(this, &ATSBaseCharacter::OnDeath);
 	HealthComponent->OnHealthChanged.AddUObject(this, &ATSBaseCharacter::OnHealthChanged);
+	LandedDelegate.AddDynamic(this, &ATSBaseCharacter::OnGroundLanded);
 }
 
 // Called every frame
@@ -119,11 +120,29 @@ void ATSBaseCharacter::OnDeath()
 
 	GetCharacterMovement()->DisableMovement();
 	SetLifeSpan(5.0f);
+	if (Controller)
+	{
+		Controller->ChangeState(NAME_Spectating);
+	}
 }
 
 void ATSBaseCharacter::OnHealthChanged(float Health)
 {
 	HealthTextComponent->SetText(FText::FromString(FString::Printf(TEXT("%.0f"), Health)));
+}
+
+void ATSBaseCharacter::OnGroundLanded(const FHitResult& Hit)
+{
+	const auto FallVelocityZ = -GetCharacterMovement()->Velocity.Z;
+	UE_LOG(LogBaseCharacter, Display, TEXT("On landed: %f"), FallVelocityZ);
+
+	if (FallVelocityZ < LandedDamageVelocity.X) return;
+
+	const auto FinalDamage = FMath::GetMappedRangeValueClamped(LandedDamageVelocity, LandedDamage,FallVelocityZ);//1 - входной отрезок, 
+																												   //2 - выходной отрезок, 
+																												   //3 - число в процентном соотношении совпадает с FallVelocityZ
+	UE_LOG(LogBaseCharacter, Display, TEXT("FinalDamage: %f"), FinalDamage);
+	TakeDamage(FinalDamage, FDamageEvent{}, nullptr, nullptr);
 }
 
 
