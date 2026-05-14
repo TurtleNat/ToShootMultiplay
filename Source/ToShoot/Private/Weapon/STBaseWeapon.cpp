@@ -8,6 +8,8 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/Controller.h"
 #include "Weapon/Components/TSWeaponFXComponent.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraSystem.h"
 
 
 DEFINE_LOG_CATEGORY_STATIC(LogBaseWeapon, All, All);
@@ -42,6 +44,20 @@ void ASTBaseWeapon::BeginPlay()
 void ASTBaseWeapon::Fire()
 {
 	UE_LOG(LogBaseWeapon, Display, TEXT("Fire!"));
+
+	if (MuzzleFX)
+	{
+		UNiagaraFunctionLibrary::SpawnSystemAttached(
+			MuzzleFX,
+			WeaponMesh,
+			MuzzleSocketName,
+			FVector::ZeroVector,
+			FRotator::ZeroRotator,
+			EAttachLocation::SnapToTarget,
+			true
+		);
+	}
+
 	MakeShot();
 }
 
@@ -54,16 +70,80 @@ void ASTBaseWeapon::MakeShot()
 
 	FVector ViewLocation;
 	FRotator ViewRotation;
-
 	Controller->GetPlayerViewPoint(ViewLocation, ViewRotation);
-
-	const FTransform SocketTransform = WeaponMesh->GetSocketTransform(MuzzleSocketName);
-	const FVector TraceStart = ViewLocation;
-	const FVector ShootDirection = ViewRotation.Vector();
-	const FVector TraceEnd = TraceStart + ShootDirection * TraceMaxDistance;
 
 	FCollisionQueryParams CollisionParams;
 	CollisionParams.AddIgnoredActor(GetOwner());
+	CollisionParams.AddIgnoredActor(this);
+
+	// trace from camera
+	const FVector CameraTraceStart = ViewLocation;
+	const FVector CameraTraceEnd = CameraTraceStart + ViewRotation.Vector() * TraceMaxDistance;
+
+	FHitResult CameraHitResult;
+	GetWorld()->LineTraceSingleByChannel(
+		CameraHitResult,
+		CameraTraceStart,
+		CameraTraceEnd,
+		ECC_Visibility,
+		CollisionParams
+	);
+
+	FVector TargetPoint = CameraTraceEnd;
+
+	if (CameraHitResult.bBlockingHit)
+	{
+		TargetPoint = CameraHitResult.ImpactPoint;
+	}
+
+	// trace from muzzle
+	const FVector TraceStart = WeaponMesh->GetSocketLocation(MuzzleSocketName);
+	const FVector ShootDirection = (TargetPoint - TraceStart).GetSafeNormal();
+	const FVector TraceEnd = TraceStart + ShootDirection * TraceMaxDistance;
+
+	FHitResult HitResult;
+	GetWorld()->LineTraceSingleByChannel(
+		HitResult,
+		TraceStart,
+		TraceEnd,
+		ECC_Visibility,
+		CollisionParams
+	);
+
+	if (HitResult.bBlockingHit)
+	{
+		MakeDamage(HitResult);
+		WeaponFXComponent->PlayImpactFX(HitResult);
+		DrawDebugLine(GetWorld(), TraceStart, HitResult.ImpactPoint, FColor::Red, false, 2.0f);
+	}
+	else
+	{
+		DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Red, false, 2.0f);
+	}
+}
+
+/*void ASTBaseWeapon::MakeShot()
+{
+	if (!GetWorld()) return;
+
+	const auto Controller = GetPlayerController();
+	if (!Controller) return;
+
+	FVector ViewLocation;
+	FRotator ViewRotation;
+
+	Controller->GetPlayerViewPoint(ViewLocation, ViewRotation);
+
+	FCollisionQueryParams CollisionParams;
+	CollisionParams.AddIgnoredActor(GetOwner()); //player
+	CollisionParams.AddIgnoredActor(this); //weapon
+
+	const FTransform SocketTransform = WeaponMesh->GetSocketTransform(MuzzleSocketName);
+	//const FVector TraceStart = ViewLocation;
+	const FVector TraceStart = SocketTransform.GetLocation();
+	const FVector ShootDirection = ViewRotation.Vector();
+	const FVector TraceEnd = TraceStart + ShootDirection * TraceMaxDistance;
+
 	FHitResult HitResult;
 	GetWorld()->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd, ECollisionChannel::ECC_Visibility);
 
@@ -79,7 +159,7 @@ void ASTBaseWeapon::MakeShot()
 		DrawDebugLine(GetWorld(), SocketTransform.GetLocation(), TraceEnd, FColor::Red, false, 3.0f, 3.0f);
 
 	}
-}
+}*/
 
 APlayerController* ASTBaseWeapon::GetPlayerController() const
 {

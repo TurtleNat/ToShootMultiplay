@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "NiagaraSystem.h"
 #include "STBaseWeapon.generated.h"
 
 class USkeletalMeshComponent;
@@ -28,7 +29,7 @@ protected:
 	USkeletalMeshComponent* WeaponMesh;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	FName MuzzleSocketName = "MuzzleSocket";
+	FName MuzzleSocketName = "Muzzle_Socket";
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	float TraceMaxDistance = 2500.0f;
@@ -38,6 +39,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "VFX")
 	UTSWeaponFXComponent* WeaponFXComponent;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
+		UNiagaraSystem* MuzzleFX;
 
 	void MakeShot();
 	APlayerController* GetPlayerController() const;
