@@ -16,4 +16,5 @@ class TOSHOOT_API ATSEnemyAIController : public AAIController
 	
 public:
 	ATSEnemyAIController();
+	virtual void BeginPlay() override;
 };
