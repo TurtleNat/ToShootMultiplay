@@ -16,4 +16,6 @@ class TOSHOOT_API ATSEnemyBaseCharacter : public ATSBaseCharacter
 	
 public:
 	ATSEnemyBaseCharacter(const FObjectInitializer& ObjInit);
+	virtual void Tick(float DeltaTime) override;
+	virtual void BeginPlay() override;
 };
