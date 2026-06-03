@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AIController.h"
+#include "TimerManager.h"
 #include "TSEnemyAIController.generated.h"
 
 /**
@@ -17,4 +18,16 @@ class TOSHOOT_API ATSEnemyAIController : public AAIController
 public:
 	ATSEnemyAIController();
 	virtual void BeginPlay() override;
+	virtual void OnMoveCompleted(FAIRequestID RequestID,const FPathFollowingResult& Result) override;
+
+protected:
+	void MoveToRandomPoint();
+
+	UPROPERTY(EditDefaultsOnly, Category = "AI")
+		float PatrolRadius = 1000.0f;
+	UPROPERTY(EditDefaultsOnly, Category = "AI")
+		float PatrolWaitTime = 1.0f;
+
+	FTimerHandle PatrolTimerHandle;
+
 };

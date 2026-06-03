@@ -6,6 +6,7 @@
 #include "NavigationSystemTypes.h"
 #include "AIController.h"
 #include "Kismet/GameplayStatics.h"
+#include "TimerManager.h"
 
 ATSEnemyAIController::ATSEnemyAIController()
 {
@@ -15,6 +16,21 @@ void ATSEnemyAIController::BeginPlay()
 {
     Super::BeginPlay();
 
+    MoveToRandomPoint();
+}
+
+void ATSEnemyAIController::OnMoveCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result)
+{
+    Super::OnMoveCompleted(RequestID, Result);
+
+    if (Result.Code == EPathFollowingResult::Success)
+    {
+        GetWorld()->GetTimerManager().SetTimer(PatrolTimerHandle, this, &ATSEnemyAIController::MoveToRandomPoint, PatrolWaitTime, false);
+    }
+}
+
+void ATSEnemyAIController::MoveToRandomPoint()
+{
     APawn* ControlledPawn = GetPawn();
     if (!ControlledPawn) return;
 
@@ -23,10 +39,10 @@ void ATSEnemyAIController::BeginPlay()
 
     FVector RandomPoint;
 
-     bool bFound = NavSys->K2_GetRandomReachablePointInRadius(GetWorld(),
-                                                             ControlledPawn->GetActorLocation(),
-                                                             RandomPoint,
-                                                             1000.0f);
+    bool bFound = NavSys->K2_GetRandomReachablePointInRadius(GetWorld(),
+        ControlledPawn->GetActorLocation(),
+        RandomPoint,
+        PatrolRadius);
 
     if (bFound)
     {
