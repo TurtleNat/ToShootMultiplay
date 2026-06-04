@@ -21,13 +21,19 @@ public:
 	virtual void OnMoveCompleted(FAIRequestID RequestID,const FPathFollowingResult& Result) override;
 
 protected:
-	void MoveToRandomPoint();
 
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
 		float PatrolRadius = 1000.0f;
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
 		float PatrolWaitTime = 1.0f;
+	UPROPERTY(EditDefaultsOnly, Category = "AI")
+		float SightRadius = 1500.f;
+	UPROPERTY(EditDefaultsOnly, Category = "AI")
+		float SightCheckTime = 0.5f;
 
 	FTimerHandle PatrolTimerHandle;
+	FTimerHandle SightTimerHandle;
 
+	void MoveToRandomPoint();
+	void CheckPlayer();
 };

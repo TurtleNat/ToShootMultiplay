@@ -16,6 +16,8 @@ void ATSEnemyAIController::BeginPlay()
 {
     Super::BeginPlay();
 
+    GetWorld()->GetTimerManager().SetTimer(SightTimerHandle, this, &ATSEnemyAIController::CheckPlayer, SightCheckTime, true);
+
     MoveToRandomPoint();
 }
 
@@ -47,5 +49,21 @@ void ATSEnemyAIController::MoveToRandomPoint()
     if (bFound)
     {
         MoveToLocation(RandomPoint);
+    }
+}
+
+void ATSEnemyAIController::CheckPlayer()
+{
+    APawn* ControlledPawn = GetPawn();
+    if (!ControlledPawn) return;
+
+    APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+    if (!PlayerPawn) return;
+
+    const float Distance = FVector::Dist(ControlledPawn->GetActorLocation(), PlayerPawn->GetActorLocation());
+
+    if (Distance <= SightRadius)
+    {
+        MoveToActor(PlayerPawn);
     }
 }
