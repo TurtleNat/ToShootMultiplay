@@ -7,6 +7,7 @@
 #include "AIController.h"
 #include "Kismet/GameplayStatics.h"
 #include "TimerManager.h"
+#include "DrawDebugHelpers.h"
 
 ATSEnemyAIController::ATSEnemyAIController()
 {
@@ -60,10 +61,38 @@ void ATSEnemyAIController::CheckPlayer()
     APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
     if (!PlayerPawn) return;
 
-    const float Distance = FVector::Dist(ControlledPawn->GetActorLocation(), PlayerPawn->GetActorLocation());
+    FVector EnemyLocation = ControlledPawn->GetActorLocation();
+    FVector PlayerLocation = PlayerPawn->GetActorLocation();
+    const FVector EnemyForwardVector = ControlledPawn->GetActorForwardVector();
+    const FVector TraceStart = EnemyLocation + FVector(0.f, 0.f, 50.f);
+    const FVector TraceEnd = PlayerLocation + FVector(0.f, 0.f, 50.f);
+    FVector DirectionToPlayer = (PlayerLocation - EnemyLocation).GetSafeNormal();
 
-    if (Distance <= SightRadius)
+    const float Distance = FVector::Dist(EnemyLocation, PlayerLocation);
+    if (Distance  >= SightRadius) return;
+
+    FCollisionQueryParams CollisionParams;
+    CollisionParams.AddIgnoredActor(ControlledPawn);
+    FHitResult HitResult;
+
+    float DotProduct = FVector::DotProduct(EnemyForwardVector, DirectionToPlayer);
+    float MinDot = FMath::Cos(FMath::DegreesToRadians(SightAngle));
+
+    if (DotProduct >= MinDot)
     {
-        MoveToActor(PlayerPawn);
+        bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd, ECC_Visibility, CollisionParams);
+        DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Green, false, 0.5f, 0, 2.f);
+
+        if (!bHit) return;
+
+        UE_LOG(LogTemp, Warning, TEXT("Hit Actor Ptr: %p"), HitResult.GetActor());
+
+        UE_LOG(LogTemp, Warning, TEXT("PlayerPawn Ptr: %p"), PlayerPawn);
+
+        if (HitResult.GetActor() == PlayerPawn)
+        {
+            MoveToActor(PlayerPawn);
+        }
     }
+  
 }

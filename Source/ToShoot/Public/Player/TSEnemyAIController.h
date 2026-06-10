@@ -29,7 +29,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
 		float SightRadius = 1500.f;
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
-		float SightCheckTime = 0.5f;
+		float SightCheckTime = 0.2f;
+	UPROPERTY(EditDefaultsOnly, Category = "AI")
+		float SightAngle = 60.f;
 
 	FTimerHandle PatrolTimerHandle;
 	FTimerHandle SightTimerHandle;

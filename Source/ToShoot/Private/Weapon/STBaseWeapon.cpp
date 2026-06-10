@@ -47,15 +47,7 @@ void ASTBaseWeapon::Fire()
 
 	if (MuzzleFX)
 	{
-		UNiagaraFunctionLibrary::SpawnSystemAttached(
-			MuzzleFX,
-			WeaponMesh,
-			MuzzleSocketName,
-			FVector::ZeroVector,
-			FRotator::ZeroRotator,
-			EAttachLocation::SnapToTarget,
-			true
-		);
+		UNiagaraFunctionLibrary::SpawnSystemAttached(MuzzleFX, WeaponMesh, MuzzleSocketName, FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::SnapToTarget, true);
 	}
 
 	MakeShot();
@@ -81,13 +73,7 @@ void ASTBaseWeapon::MakeShot()
 	const FVector CameraTraceEnd = CameraTraceStart + ViewRotation.Vector() * TraceMaxDistance;
 
 	FHitResult CameraHitResult;
-	GetWorld()->LineTraceSingleByChannel(
-		CameraHitResult,
-		CameraTraceStart,
-		CameraTraceEnd,
-		ECC_Visibility,
-		CollisionParams
-	);
+	GetWorld()->LineTraceSingleByChannel(CameraHitResult, CameraTraceStart, CameraTraceEnd, ECC_Visibility, CollisionParams);
 
 	FVector TargetPoint = CameraTraceEnd;
 
@@ -102,13 +88,7 @@ void ASTBaseWeapon::MakeShot()
 	const FVector TraceEnd = TraceStart + ShootDirection * TraceMaxDistance;
 
 	FHitResult HitResult;
-	GetWorld()->LineTraceSingleByChannel(
-		HitResult,
-		TraceStart,
-		TraceEnd,
-		ECC_Visibility,
-		CollisionParams
-	);
+	GetWorld()->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd, ECC_Visibility, CollisionParams);
 
 	if (HitResult.bBlockingHit)
 	{
