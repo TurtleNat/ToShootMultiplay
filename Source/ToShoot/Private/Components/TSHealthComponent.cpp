@@ -3,7 +3,7 @@
 
 #include "Components/TSHealthComponent.h"
 #include "GameFramework/Actor.h"
-#include "OnlineSession.generated.h"
+//#include "OnlineSession.generated.h"
 #include "Dev/TSFireDamageType.h"
 #include "Dev/TSIceDamageType.h"
 #include "TimerManager.h"
@@ -32,11 +32,14 @@ void UTSHealthComponent::BeginPlay()
 	// ...
 	
 	AActor* ComponentOwner = GetOwner();
+
+	UE_LOG(LogTemp, Error, TEXT("HealthComponent BeginPlay %s"), *GetNameSafe(GetOwner()));
 	if (ComponentOwner)
 	{
 		ComponentOwner->OnTakeAnyDamage.AddDynamic(this, &UTSHealthComponent::OnTakeAnyDamage);
 		//ComponentOwner->OnTakeAnyDamage.AddDynamic(this, &UTSHealthComponent::DoHeal);
 	}
+
 }
 
 
@@ -76,7 +79,6 @@ void UTSHealthComponent::OnTakeAnyDamage(AActor* DamagedActor, float Damage, con
 
 void UTSHealthComponent::DoHeal( )
 {
-	//if ((0.0f < Health) && (Health < 100.0f))
 	if((Health < 100.0f) )
 	{
 		Health = Health + HealModifier;
@@ -93,3 +95,4 @@ void UTSHealthComponent::DoHeal( )
 		GetWorld()->GetTimerManager().ClearTimer(OnStepHealTimer);
 	}
 }
+
