@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "AIController.h"
 #include "TimerManager.h"
+#include "BehaviorTree/BehaviorTree.h"
 #include "TSEnemyAIController.generated.h"
 
 /**
@@ -19,6 +20,8 @@ public:
 	ATSEnemyAIController();
 	virtual void BeginPlay() override;
 	virtual void OnMoveCompleted(FAIRequestID RequestID,const FPathFollowingResult& Result) override;
+	//UFUNCTION(BlueprintCallable)
+	AActor* FindPlayer();
 
 protected:
 
@@ -36,6 +39,9 @@ protected:
 	FTimerHandle PatrolTimerHandle;
 	FTimerHandle SightTimerHandle;
 
-	void MoveToRandomPoint();
-	void CheckPlayer();
+	//void MoveToRandomPoint();
+	
+
+	UPROPERTY(EditDefaultsOnly, Category = "AI")
+		UBehaviorTree* BehaviorTreeAsset;
 };
