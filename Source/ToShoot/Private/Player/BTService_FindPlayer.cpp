@@ -30,16 +30,13 @@ void UBTService_FindPlayer::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* N
     if (!BlackboardComp) return;
 
     if (Player)
-    {
-        BlackboardComp->SetValueAsObject("TargetActor", Player);
-        BlackboardComp->SetValueAsBool("HasTarget", true);
+    {                     
+        BlackboardComp->SetValueAsObject(TargetActorKey.SelectedKeyName, Player);
         UE_LOG(LogTemp, Warning, TEXT("Player Found"));
-        UE_LOG(LogTemp, Warning, TEXT("HasTarget = %s"), BlackboardComp->GetValueAsBool(TEXT("HasTarget")) ? TEXT("True") : TEXT("False"));
     }
     else
     {
-        BlackboardComp->SetValueAsObject("TargetActor", nullptr);
-        BlackboardComp->SetValueAsBool("HasTarget", false);
+        BlackboardComp->SetValueAsObject(TargetActorKey.SelectedKeyName, nullptr);
         UE_LOG(LogTemp, Warning, TEXT("Player Lost"));
     }
 }

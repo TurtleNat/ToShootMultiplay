@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/Services/BTService_BlackboardBase.h"
+#include "BehaviorTree/BehaviorTreeTypes.h"
 #include "BTService_FindPlayer.generated.h"
 
 /**
@@ -19,6 +20,10 @@ public:
 	UBTService_FindPlayer();
 
 protected:
+
+	UPROPERTY(EditAnywhere, Category = "Blackboard")
+		FBlackboardKeySelector TargetActorKey;
+
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 	
 };
