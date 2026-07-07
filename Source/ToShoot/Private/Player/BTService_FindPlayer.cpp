@@ -32,6 +32,7 @@ void UBTService_FindPlayer::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* N
     if (Player)
     {                     
         BlackboardComp->SetValueAsObject(TargetActorKey.SelectedKeyName, Player);
+        BlackboardComp->SetValueAsVector(TEXT("LastKnownLocation"), Player->GetActorLocation());
         UE_LOG(LogTemp, Warning, TEXT("Player Found"));
     }
     else
