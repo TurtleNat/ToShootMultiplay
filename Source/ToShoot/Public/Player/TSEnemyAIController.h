@@ -22,6 +22,7 @@ public:
 	virtual void OnMoveCompleted(FAIRequestID RequestID,const FPathFollowingResult& Result) override;
 	//UFUNCTION(BlueprintCallable)
 	AActor* FindPlayer();
+	float GetSightAngle() const;
 
 protected:
 

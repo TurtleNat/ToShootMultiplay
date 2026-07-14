@@ -104,3 +104,8 @@ AActor* ATSEnemyAIController::FindPlayer()
     return nullptr;
 
 }
+
+float ATSEnemyAIController::GetSightAngle() const
+{
+    return SightAngle;
+}
