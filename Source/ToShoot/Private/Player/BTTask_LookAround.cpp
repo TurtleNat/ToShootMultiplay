@@ -39,7 +39,10 @@ EBTNodeResult::Type UBTTask_LookAround::ExecuteTask(UBehaviorTreeComponent& Owne
 	Memory->StartYaw = Pawn->GetActorRotation().Yaw;
 
 	const float SightAngle = EnemyAI->GetSightAngle();
-	Memory->TargetYaw = Memory->StartYaw - SightAngle;
+
+	Memory->LookAngle = FMath::FRandRange(SightAngle * 0.6f, SightAngle);
+	UE_LOG(LogTemp, Warning, TEXT("Look Angle = %.1f"), Memory->LookAngle);
+	Memory->TargetYaw = Memory->StartYaw - SightAngle - Memory->LookAngle;
 
 	Memory->State = ELookAroundState::LookLeft;
 
@@ -84,6 +87,7 @@ void UBTTask_LookAround::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Node
 	{
 	case ELookAroundState::LookLeft:
 
+		Memory->TargetYaw = Memory->StartYaw + Memory->LookAngle;
 		Memory->State = ELookAroundState::LookRight;
 		Memory->TargetYaw = Memory->StartYaw + EnemyAI->GetSightAngle();
 
@@ -91,8 +95,8 @@ void UBTTask_LookAround::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Node
 
 	case ELookAroundState::LookRight:
 
-		Memory->State = ELookAroundState::ReturnCenter;
 		Memory->TargetYaw = Memory->StartYaw;
+		Memory->State = ELookAroundState::ReturnCenter;
 
 		break;
 

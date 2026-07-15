@@ -25,7 +25,7 @@ struct FLookAroundMemory
 
     float StartYaw = 0.f;
     float TargetYaw = 0.f;
-    //int32 Direction = 1;
+    float LookAngle = 0.f;
     ELookAroundState State = ELookAroundState::LookLeft;
 };
 
@@ -47,5 +47,8 @@ protected:
 
     UPROPERTY(EditAnywhere, Category = "Look Around")
         float RotationSpeed = 90.f;
+
+    UPROPERTY(EditAnywhere, Category = "Look Around")
+        float LookAngleVariation = 15.f;
 
 };
