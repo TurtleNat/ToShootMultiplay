@@ -27,6 +27,7 @@ struct FLookAroundMemory
     float TargetYaw = 0.f;
     float LookAngle = 0.f;
     ELookAroundState State = ELookAroundState::LookLeft;
+    float WaitTime = 0.f;
 };
 
 UCLASS()

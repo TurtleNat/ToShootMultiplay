@@ -38,6 +38,8 @@ EBTNodeResult::Type UBTTask_LookAround::ExecuteTask(UBehaviorTreeComponent& Owne
 
 	Memory->StartYaw = Pawn->GetActorRotation().Yaw;
 
+	Memory->WaitTime = FMath::FRandRange(0.5f, 1.2f);
+
 	const float SightAngle = EnemyAI->GetSightAngle();
 
 	Memory->LookAngle = FMath::FRandRange(SightAngle * 0.6f, SightAngle);
@@ -53,6 +55,15 @@ void UBTTask_LookAround::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Node
 {
 	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
 
+	FLookAroundMemory* Memory = reinterpret_cast<FLookAroundMemory*>(NodeMemory); // Memory for this one enemy
+
+	Memory->WaitTime -= DeltaSeconds;
+
+	if (Memory->WaitTime > 0.f)
+	{
+		return;
+	}
+
 	ATSEnemyAIController* EnemyAI = Cast<ATSEnemyAIController>(OwnerComp.GetAIOwner());
 	if (!EnemyAI)
 	{
@@ -67,7 +78,7 @@ void UBTTask_LookAround::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Node
 		return;
 	}
 
-	FLookAroundMemory* Memory = reinterpret_cast<FLookAroundMemory*>(NodeMemory); // Memory for this one enemy
+	
 
 	FRotator CurrentRotation = Pawn->GetActorRotation();
 	FRotator TargetRotation(0.f, Memory->TargetYaw, 0.f);
