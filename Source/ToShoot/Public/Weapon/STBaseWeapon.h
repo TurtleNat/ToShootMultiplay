@@ -43,6 +43,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
 		UNiagaraSystem* MuzzleFX;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon|Sound")
+		USoundBase* FireSound;
+
 	void MakeShot();
 	APlayerController* GetPlayerController() const;
 	void MakeDamage(const FHitResult& HitResult);
