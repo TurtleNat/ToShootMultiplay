@@ -14,7 +14,9 @@ UENUM()
 enum class ELookAroundState : uint8
 {
     LookLeft,
+    WaitAfterLeft,
     LookRight,
+    WaitAfterRight,
     ReturnCenter
 };
 
@@ -26,8 +28,12 @@ struct FLookAroundMemory
     float StartYaw = 0.f;
     float TargetYaw = 0.f;
     float LookAngle = 0.f;
+
+    float InitialWaitTime = 0.f;
+    float TurnWaitTime = 0.f;
+    bool bTurnWaitTime = false;
+
     ELookAroundState State = ELookAroundState::LookLeft;
-    float WaitTime = 0.f;
 };
 
 UCLASS()

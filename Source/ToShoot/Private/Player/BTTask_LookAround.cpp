@@ -38,7 +38,7 @@ EBTNodeResult::Type UBTTask_LookAround::ExecuteTask(UBehaviorTreeComponent& Owne
 
 	Memory->StartYaw = Pawn->GetActorRotation().Yaw;
 
-	Memory->WaitTime = FMath::FRandRange(0.5f, 1.2f);
+	Memory->InitialWaitTime = FMath::FRandRange(0.5f, 1.2f);
 
 	const float SightAngle = EnemyAI->GetSightAngle();
 
@@ -57,9 +57,9 @@ void UBTTask_LookAround::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Node
 
 	FLookAroundMemory* Memory = reinterpret_cast<FLookAroundMemory*>(NodeMemory); // Memory for this one enemy
 
-	Memory->WaitTime -= DeltaSeconds;
+	Memory->InitialWaitTime -= DeltaSeconds;
 
-	if (Memory->WaitTime > 0.f)
+	if (Memory->InitialWaitTime > 0.f)
 	{
 		return;
 	}
@@ -77,8 +77,6 @@ void UBTTask_LookAround::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Node
 		FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
 		return;
 	}
-
-	
 
 	FRotator CurrentRotation = Pawn->GetActorRotation();
 	FRotator TargetRotation(0.f, Memory->TargetYaw, 0.f);
@@ -98,16 +96,42 @@ void UBTTask_LookAround::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Node
 	{
 	case ELookAroundState::LookLeft:
 
-		Memory->TargetYaw = Memory->StartYaw + Memory->LookAngle;
-		Memory->State = ELookAroundState::LookRight;
-		Memory->TargetYaw = Memory->StartYaw + EnemyAI->GetSightAngle();
+		Memory->TurnWaitTime = FMath::FRandRange(0.3f, 0.6f);
+		//Memory->TargetYaw = Memory->StartYaw + Memory->LookAngle;
+		Memory->State = ELookAroundState::WaitAfterLeft;
+		//Memory->TargetYaw = Memory->StartYaw + EnemyAI->GetSightAngle();
 
 		break;
 
+	case ELookAroundState::WaitAfterLeft:
+
+		Memory->TurnWaitTime -= DeltaSeconds;
+
+		if (Memory->TurnWaitTime <= 0.f)
+		{
+			Memory->TargetYaw = Memory->StartYaw + Memory->LookAngle;
+			Memory->State = ELookAroundState::LookRight;
+		}
+
+		break; 
+
 	case ELookAroundState::LookRight:
 
+		Memory->TurnWaitTime = FMath::FRandRange(0.3f, 0.6f);
 		Memory->TargetYaw = Memory->StartYaw;
-		Memory->State = ELookAroundState::ReturnCenter;
+		Memory->State = ELookAroundState::WaitAfterRight;
+
+		break;
+
+	case ELookAroundState::WaitAfterRight:
+
+		Memory->TurnWaitTime -= DeltaSeconds;
+
+		if (Memory->TurnWaitTime <= 0.f)
+		{
+			Memory->TargetYaw = Memory->StartYaw;
+			Memory->State = ELookAroundState::ReturnCenter;
+		}
 
 		break;
 
